@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en" ng-app="app">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="node_modules/angularjs-slider/dist/rzslider.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+    <style>
+        .topbar{
+             display:block;
+              width:100%;
+              height:200px;
+       }
+      
+       .top-dark-div{
+        overflow:hidden;
+        transition:max-height 1s cubic-bezier(0,.98,0,1.02) 0s;
+        height:auto;
+        max-height:380px;
+       }
+
+       .top-dark-div.error-appeared{
+        max-height:450px;
+
+       }
+       .download-info{
+       
+        position: relative;
+        margin: 2% auto;
+         width: 60%;
+       }
+       li.ng-animate {
+         z-index: -1;
+        }
+       li.ng-animate,
+       li.ng-animate ~ li {
+        transition: transform 0.6s;
+        }
+       .download-info.ng-enter{
+        transition:0.8s linear all;
+         left:-100px;
+         opacity: 0;
+       }
+
+       .download-info.ng-enter.ng-enter-active{
+        left: 0px;
+        opacity: 1;
+       }
+
+       .download-info.ng-leave{
+        transition:0.8s linear all;
+        opacity: 1;
+         left:0px;
+       }
+       .download-info.ng-leave.ng-leave-active{
+        opacity: 0;
+
+         left:100px;
+       }
+       .error-band.ng-hide{
+         opacity: 0;
+         left:100px;
+
+       }
+
+       .error-band.ng-hide-add,
+       .error-band.ng-hide-remove {
+        transition: all linear 1s;
+      }
+
+      .error-band{
+        opacity: 1;
+        margin-top:10px;
+        left:0px;
+
+      }
+
+      .advanced.ng-hide{
+         opacity: 0.1;
+         left:100px;
+         margin-left:1230px;
+
+       }
+
+       .advanced.ng-hide-add{
+        transition: 1s cubic-bezier(0,1.08,.3,.96) 0s;
+
+       }
+       .advanced.ng-hide-remove {
+        transition: 12s cubic-bezier(0,.98,0,1.02) 0s;
+      }
+
+      .advanced{
+        opacity: 1;
+        margin-top:10px;
+        left:0px;
+
+      }
+      
+      .advanced-band{
+        transition:max-height 3s cubic-bezier(0,.98,0,1.02) 0s;
+        max-height: 0px;
+        overflow: hidden;
+      }
+      
+      .advanced-band.advanced-appeared{
+        max-height: 800px;
+
+      }
+    </style>
+    <title>Hello, world!</title>
+
+  </head>
+  <script src="node_modules/angular/angular.min.js"></script>
+  <script src="node_modules/angularjs-slider/dist/rzslider.js"></script>
+  <script src="node_modules/angular-animate/angular-animate.min.js"></script>
+    <script src="app.js"></script>
+
+    <script src="util/DownloadArray.js"></script>
+  <script src="util/Slider.js"></script> 
+  <script src="util/Utils.js"></script> 
+  <script src="factory/FactoryModule.js"></script>
+  <script src="factory/SessionFactory.js"></script>
+  <script src="factory/DownloadRequestFactory.js"></script>
+  <script src="controller/DeffaultController.js"></script>
+
+
+  <body  ng-controller="sessionCtrl">
+        <div class="jumbotron bg-dark text-white top-dark-div"  ng-class="{true: 'error-appeared', false: ''}[isError == true]">
+                <div class="topbar">
+                        <div class="row justify-content-center">
+                     
+                                <h1 class="display-4">YT-Downloader</h1>
+                                
+                              </div>
+                              <div class="mt-2 col-md-12" style="margin-bottom:70px">
+                            </div>
+                              <div class="row justify-content-center">
+                          
+                                    <div class="radio" style="padding:5px">
+                                            <label><input type="checkbox" name="optradio" ng-model="audio"  value="audio" ng-change="updateMediaType('audio',audio)" >Best Audio</label>
+                                          </div>
+                                          <div class="radio" style="padding:5px">
+                                            <label><input  type="checkbox" ng-model="video" name="optradio" value="video" ng-change="updateMediaType('video',video)">Best Video</label>
+                                          </div>
+                                        
+                                      </div>
+     
+                </div>
+                <div class="content" >
+                        <div class="row">
+                            <div class="col-md-3"></div>
+                            <div class="input-group input-group-lg col-md-6">
+        
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text" id="inputGroup-sizing-lg">Link</span>
+                                    </div>
+                                    <input ng-model = "link" type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm">
+                                    <div class="input-group-append">
+                                            <button class="btn btn-primary" ng-disabled = "enableDownload" ng-click="downloadClick()" id="downloadButton"><i id = "loadingIcon"class="fa fa-spinner fa-spin"></i> Download</button>
+                                            <button class="btn btn-primary" ng-disabled = "enableDownload" ng-click="advancedClick()" id="advancedButton"><i class="fas fa-tools"></i></button>
+                                          </div>
+                                </div>
+                            <div class="col-md-3"></div>
+                            </div>
+
+                            
+                          
+                        </div>
+                        <div class="row" >
+                          <div class="col-md-3"></div>
+                          <div class="col-md-6 error-band" ng-show="errorBand" ng-cloak>
+      
+                            <div class="alert alert-danger">
+                              <strong>{{errorBand.title}}</strong> {{errorBand.message}}
+                            </div>
+                              </div>
+                          <div class="col-md-3"></div>
+                       
+                          </div>
+
+                          
+                        
+                      </div>
+                     
+                </div>
+                <div class = "advanced-band" ng-class="{true: 'advanced-appeared', false: ''}[isAdvanced == true]">
+                <div class="jumbotron bg-blue text-dark advanced" ng-show="isAdvanced" ng-cloak>
+                    <button class="btn btn-primary" ng-click="closeAdvancedClick()" id="closeAdvanced"><i class="far fa-window-close"></i></button>
+                    <div class="row justify-content-center">
+                  <h1 class="display-4">Advanced</h1>
+                  </div>
+                  <div class="mt-2 col-md-12" style="margin-bottom:70px">
+                    </div>
+                  <div class="row">
+                      <div class="col-md-1">
+                      </div>
+                  <div class="col-md-5">
+                      <img src="{{advanced.thumbnail}}" width="100%"></img>
+                  </div>
+                  <div class="col-md-6">
+                      <h2>{{advanced.title}}</h2>
+                      <p>{{advanced.author}}</p>
+                      <p>{{advanced.time}}</p>
+                      <div class="checkbox">
+                          <label for="checkbox1">
+                              <span>Overwrite old?</span>
+                          </label>
+                          <input type="checkbox" ng-change = "overwriteOnChange()" ng-model="overwrite" checked><span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>
+                      </div>                    
+                    <div>
+                        <rzslider
+                        rz-slider-model="advanced.slider.min"
+                        rz-slider-high="advanced.slider.max"
+                        rz-slider-options="advanced.slider.options"></rzslider>
+                    </div>
+                    <button class="btn btn-primary" ng-click="downloadAdvancedClick()" id="downloadAdvancedButton"> Download</button>
+
+                  </div>
+                  </div>
+                </div>
+                </div>
+                <div class="jumbotron bg-white text-dark">
+                    <ul>
+                    <div class = "border border-primary download-info" data-ng-repeat="download in downloads" ng-cloak>
+                        <h2>{{download.title}}</h2>
+                        <div>{{download.state}}</div>
+                        <div class="progress-bar" role="progressbar" style="width: {{download.percentage}}%;" aria-valuenow={{download.percentage}} aria-valuemin="0" aria-valuemax="100">{{download.percentage}}%</div>
+
+                    </div>
+                  </ul>
+                </div>
+      
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS 
+    <!-- <script src="node_modules/jquery/dist/jquery.min.js"></script>-->
+    <script src="https://code.jquery.com/jquery-2.2.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <script src="node_modules/popper.js/dist/popper.js"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js" ></script>
+
+    <script>
+
+        /*
+        var $injector = angular.element(document).injector();
+        console.log($injector.has('sessionFactory') + "");
+        var SessionFactory = $injector.get('sessionFactory');
+         console.log( "ready!" );
+        var id = setInterval(function(){
+          var token = SessionFactory.get();
+          if (token != null){
+            clearInterval(id);
+            startFunction(token);
+        }
+    },1000);
+      });
+*/
+      
+      
+    </script>
+  </body>
+</html>
